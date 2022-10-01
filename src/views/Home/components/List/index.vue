@@ -11,10 +11,12 @@
       <template v-slot:[`item.createdAt`]="{ item }">
         <span> {{ getDateFormat(item.createdAt) }}</span>
       </template>
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-icon class="mr-2" @click="deleteSubject(item)"> mdi-delete </v-icon>
+      </template>
     </v-data-table>
   </div>
 </template>
-
 <script>
 import { getDateFormat } from '@/utils/date'
 
@@ -39,12 +41,22 @@ export default {
           text: 'Date',
           value: 'createdAt',
           sortable: false
-          // align: 'end',
-          // width: '10%'
+        },
+        {
+          text: '',
+          value: 'actions',
+          sortable: false,
+          align: 'end',
+          width: '10%'
         }
       ],
       options: {},
       dialog: false
+    }
+  },
+  methods: {
+    deleteSubject(item) {
+      this.$emit('deleteSubject', item)
     }
   }
 }

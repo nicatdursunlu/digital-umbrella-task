@@ -5,14 +5,27 @@
     </div>
     <div class="pa-4">
       <Form @formSubmit="handleFormSubmit" />
-      <List :subjects="subjects" />
+      <List :subjects="subjects" @deleteSubject="handleDeleteSubject" />
     </div>
+    <ConfirmationPopup
+      title="Subjectin silinməsi"
+      v-if="subjectToDelete"
+      :dialog="confirmationDialog"
+      @confirm="handleDeleteConfirmation"
+      @cancel="handleDeleteCancellation"
+    >
+      <span class="font-weight-bold">
+        {{ subjectToDelete.subject }}
+      </span>
+      subjecti silmək istədiyinizə əminsiniz?
+    </ConfirmationPopup>
   </div>
 </template>
 
 <script>
 import { v4 as uuidv4 } from 'uuid'
 
+import ConfirmationPopup from '@/shared/Common/ConfirmationPopup'
 import Toolbar from './components/Toolbar'
 import List from './components/List'
 import Form from './components/Form'
@@ -21,12 +34,15 @@ export default {
   components: {
     Toolbar,
     List,
-    Form
+    Form,
+    ConfirmationPopup
   },
   data() {
     return {
       dialog: false,
-      subjects: []
+      subjects: [],
+      confirmationDialog: false,
+      subjectToDelete: null
     }
   },
   methods: {
@@ -41,6 +57,20 @@ export default {
         createdAt: Date.now()
       })
       localStorage.setItem('subjects', JSON.stringify(this.subjects))
+    },
+    handleDeleteSubject(item) {
+      this.confirmationDialog = true
+      this.subjectToDelete = item
+    },
+    handleDeleteConfirmation() {
+      const index = this.subjects.indexOf(this.subjectToDelete)
+      this.subjects.splice(index, 1)
+      localStorage.setItem('subjects', JSON.stringify(this.subjects))
+      this.handleDeleteCancellation()
+    },
+    handleDeleteCancellation() {
+      this.confirmationDialog = false
+      this.subjectToDelete = null
     }
   },
   mounted() {
