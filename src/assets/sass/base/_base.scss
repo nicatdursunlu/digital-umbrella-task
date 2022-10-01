@@ -1,0 +1,27 @@
+.page {
+  &__header {
+    border-bottom: 1px solid var(--v-gray-lighten2);
+  }
+}
+
+.v-data-table {
+  border: 1px solid var(--v-gray-lighten2);
+  border-radius: 4px !important;
+
+  &__wrapper {
+    border-radius: 4px !important;
+  }
+}
+
+thead.v-data-table-header {
+  background-color: var(--v-gray-lighten4);
+  border-radius: 4px !important;
+
+  th {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+.border-bottom {
+  border-bottom: 1px solid var(--v-gray-lighten2);
+}
