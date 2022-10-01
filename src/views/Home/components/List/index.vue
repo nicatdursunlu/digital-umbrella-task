@@ -1,9 +1,26 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="subjects">
+    <v-data-table
+      :headers="headers"
+      :items="subjects"
+      :item-class="getItemClass"
+    >
+      <template v-slot:[`item.check`]="{ item }">
+        <v-checkbox
+          @change="toggleCompletedState"
+          v-model="item.isCompleted"
+          hide-details
+          class="mt-0"
+        />
+      </template>
       <template v-slot:[`item.tags`]="{ item }">
         <v-chip v-for="tag in item.tags" :key="tag.id" class="mr-2" small>
-          <span class="body-2 gray--text text--darken-3">
+          <span
+            class="body-2"
+            :class="
+              item.isCompleted ? 'gray--text text--darken-3' : 'gray--text'
+            "
+          >
             {{ tag }}
           </span>
         </v-chip>
@@ -31,6 +48,13 @@ export default {
     return {
       getDateFormat,
       headers: [
+        {
+          text: '',
+          value: 'check',
+          sortable: false,
+          align: 'start',
+          width: '10%'
+        },
         { text: 'Subject', value: 'subject', sortable: false, width: '50%' },
         {
           text: 'Tags',
@@ -57,6 +81,15 @@ export default {
   methods: {
     deleteSubject(item) {
       this.$emit('deleteSubject', item)
+    },
+    toggleCompletedState() {
+      localStorage.setItem('subjects', JSON.stringify(this.subjects))
+    },
+    getItemClass(item) {
+      if (!item.isCompleted) {
+        return 'gray--text lighten-4'
+      }
+      return ''
     }
   }
 }
