@@ -7,7 +7,7 @@
             <v-icon class="mr-2" medium> mdi-magnify </v-icon>
             <span> Axtarış </span>
           </v-btn>
-          <v-btn @click="handleOpenDialog" color="primary" depressed>
+          <v-btn @click="toggleDialog" color="primary" depressed>
             <v-icon class="mr-2" medium> mdi-plus </v-icon>
             <span> Əlavə et </span>
           </v-btn>
@@ -20,7 +20,7 @@
 <script>
 export default {
   props: {
-    handleOpenDialog: {
+    toggleDialog: {
       type: Function,
       required: true
     }

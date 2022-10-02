@@ -18,7 +18,7 @@
           <span
             class="body-2"
             :class="
-              item.isCompleted ? 'gray--text text--darken-3' : 'gray--text'
+              item.isCompleted ? 'gray--text' : 'gray--text text--darken-3'
             "
           >
             {{ tag }}
@@ -29,6 +29,7 @@
         <span> {{ getDateFormat(item.createdAt) }}</span>
       </template>
       <template v-slot:[`item.actions`]="{ item }">
+        <v-icon class="mr-2" @click="editSubject(item)"> mdi-pencil </v-icon>
         <v-icon class="mr-2" @click="deleteSubject(item)"> mdi-delete </v-icon>
       </template>
     </v-data-table>
@@ -55,11 +56,12 @@ export default {
           align: 'start',
           width: '10%'
         },
-        { text: 'Subject', value: 'subject', sortable: false, width: '50%' },
+        { text: 'Subject', value: 'subject', sortable: false },
         {
           text: 'Tags',
           value: 'tags',
-          sortable: false
+          sortable: false,
+          width: '50%'
         },
         {
           text: 'Date',
@@ -82,11 +84,14 @@ export default {
     deleteSubject(item) {
       this.$emit('deleteSubject', item)
     },
+    editSubject(item) {
+      this.$emit('editSubject', item)
+    },
     toggleCompletedState() {
       localStorage.setItem('subjects', JSON.stringify(this.subjects))
     },
     getItemClass(item) {
-      if (!item.isCompleted) {
+      if (item.isCompleted) {
         return 'gray--text lighten-4'
       }
       return ''

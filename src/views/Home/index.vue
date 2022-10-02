@@ -1,11 +1,21 @@
 <template>
   <div class="page">
     <div class="page__header">
-      <Toolbar :handleOpenDialog="handleOpenDialog" />
+      <Toolbar :toggleDialog="toggleDialog" />
     </div>
     <div class="pa-4">
-      <Form @formSubmit="handleFormSubmit" />
-      <List :subjects="subjects" @deleteSubject="handleDeleteSubject" />
+      <v-dialog v-model="dialog" persistent max-width="570px">
+        <Form
+          :selectedSubject="selectedSubject"
+          :toggleDialog="toggleDialog"
+          @formSubmit="handleFormSubmit"
+        />
+      </v-dialog>
+      <List
+        :subjects="subjects"
+        @deleteSubject="handleDeleteSubject"
+        @editSubject="handleEditSubject"
+      />
     </div>
     <ConfirmationPopup
       title="Subjectin silinməsi"
@@ -42,21 +52,32 @@ export default {
       dialog: false,
       subjects: [],
       confirmationDialog: false,
-      subjectToDelete: null
+      subjectToDelete: null,
+      selectedSubject: null
     }
   },
   methods: {
-    handleOpenDialog() {
-      this.$eventBus.$emit('handleOpenDialog', true)
+    toggleDialog() {
+      this.dialog = !this.dialog
+      if (!this.dialog) {
+        this.selectedSubject = null
+      }
     },
     handleFormSubmit(form) {
-      this.subjects.unshift({
-        id: uuidv4(),
-        subject: form.subject,
-        tags: form.tags.split(','),
-        createdAt: Date.now()
-      })
+      if (form.id) {
+        let subject = this.subjects.find((subject) => subject.id === form.id)
+        subject.subject = form.subject
+        subject.tags = form.tags.split(',')
+      } else {
+        this.subjects.unshift({
+          id: uuidv4(),
+          subject: form.subject,
+          tags: form.tags.split(','),
+          createdAt: Date.now()
+        })
+      }
       localStorage.setItem('subjects', JSON.stringify(this.subjects))
+      this.toggleDialog()
     },
     handleDeleteSubject(item) {
       this.confirmationDialog = true
@@ -71,6 +92,10 @@ export default {
     handleDeleteCancellation() {
       this.confirmationDialog = false
       this.subjectToDelete = null
+    },
+    handleEditSubject(item) {
+      this.toggleDialog()
+      this.selectedSubject = item
     }
   },
   mounted() {
